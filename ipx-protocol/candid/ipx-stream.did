@@ -1,0 +1,43 @@
+type ClaimResult = record {
+  claimed_amount : nat64;
+  stream_id : nat64;
+  next_claim_time : nat64;
+  remaining_amount : nat64;
+};
+type Result = variant { Ok : ClaimResult; Err : text };
+type Result_1 = variant { Ok : nat64; Err : text };
+type Result_2 = variant { Ok : vec nat64; Err : text };
+type Result_3 = variant { Ok; Err : text };
+type Stream = record {
+  total_amount : nat64;
+  claimed_amount : nat64;
+  amount_per_second : nat64;
+  recipient : principal;
+  end_time : nat64;
+  start_time : nat64;
+  vault_canister : principal;
+  stream_id : nat64;
+  is_active : bool;
+  stream_type : StreamType;
+  campaign_id : nat64;
+};
+type StreamStats = record {
+  active_streams : nat64;
+  total_streams : nat64;
+  total_volume : nat64;
+  claimed_volume : nat64;
+};
+type StreamType = variant { Linear; Exponential; Cliff };
+service : () -> {
+  claim_stream : (nat64) -> (Result);
+  create_stream : (principal, nat64, nat64, nat64, principal, StreamType) -> (
+      Result_1,
+    );
+  create_streams : (vec record { principal; nat64 }) -> (Result_2);
+  get_claimable_amount : (nat64) -> (nat64) query;
+  get_stream : (nat64) -> (opt Stream) query;
+  get_stream_stats : () -> (StreamStats) query;
+  get_user_streams : (principal) -> (vec Stream) query;
+  pause_stream : (nat64) -> (Result_3);
+  resume_stream : (nat64) -> (Result_3);
+}

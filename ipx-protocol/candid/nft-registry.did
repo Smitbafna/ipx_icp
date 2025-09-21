@@ -1,0 +1,113 @@
+type ApprovalArgs = record { token_id : nat64; approved : principal };
+type CollectionMetadata = record {
+  name : text;
+  description : text;
+  image : text;
+  total_supply : nat64;
+};
+type ProofType = variant {
+  ViewCount;
+  SubscriberCount;
+  Combined;
+  ChannelOwnership;
+  VideoEngagement;
+};
+type Result = variant { Ok : nat64; Err : text };
+type Result_1 = variant { Ok; Err : text };
+type Result_2 = variant { Ok : bool; Err : text };
+type TokenMetadata = record {
+  token_id : nat64;
+  owner : principal;
+  created_at : nat64;
+  investment_amount : nat64;
+  share_percentage : float64;
+  metadata_json : text;
+  vault_canister : principal;
+  campaign_id : nat64;
+};
+type TransferArgs = record {
+  to : principal;
+  token_id : nat64;
+  from : principal;
+};
+type YouTubeIdentity = record {
+  channel_id : text;
+  subscriber_count : opt nat64;
+  view_count : opt nat64;
+  channel_name : opt text;
+  video_count : opt nat64;
+  valid_until : opt nat64;
+  creation_date : opt text;
+  verification_timestamp : nat64;
+};
+type YouTubeMetrics = record {
+  subscriber_count : nat64;
+  view_count : nat64;
+  video_count : nat64;
+  verified_at : nat64;
+};
+service : () -> {
+  get_principal_by_youtube_channel : (text) -> (opt principal) query;
+  get_youtube_identity : (principal) -> (opt YouTubeIdentity) query;
+  get_youtube_metrics : (text) -> (opt YouTubeMetrics) query;
+  icrc7_approve : (ApprovalArgs) -> (Result);
+  icrc7_balance_of : (principal) -> (nat64) query;
+  icrc7_collection_metadata : () -> (CollectionMetadata) query;
+  icrc7_description : () -> (text) query;
+  icrc7_get_approved : (nat64) -> (opt principal) query;
+  icrc7_is_approved_for_all : (principal, principal) -> (bool) query;
+  icrc7_name : () -> (text) query;
+  icrc7_owner_of : (nat64) -> (opt principal) query;
+  icrc7_set_approval_for_all : (principal, bool) -> (Result_1);
+  icrc7_token_metadata : (nat64) -> (opt TokenMetadata) query;
+  icrc7_tokens_of : (principal) -> (vec nat64) query;
+  icrc7_total_supply : () -> (nat64) query;
+  icrc7_transfer : (TransferArgs) -> (Result);
+  mint : (principal, nat64, principal, nat64, float64, text) -> (Result);
+  mint_nft_with_youtube_verification : (
+      principal,
+      nat64,
+      principal,
+      nat64,
+      float64,
+      text,
+      opt text,
+      opt nat64,
+      opt nat64,
+    ) -> (Result);
+  mint_nft_with_youtube_verification_legacy : (
+      principal,
+      nat64,
+      principal,
+      nat64,
+      float64,
+      text,
+      opt text,
+    ) -> (Result);
+  set_youtube_verifier_key : (blob, ProofType) -> (Result_2);
+  set_youtube_verifier_key_legacy : (blob) -> (Result_2);
+  store_youtube_zk_proof : (
+      blob,
+      vec text,
+      text,
+      opt text,
+      ProofType,
+      opt nat64,
+      opt nat64,
+      opt nat64,
+      opt text,
+    ) -> (Result_2);
+  store_youtube_zk_proof_legacy : (blob, vec text, text, opt text) -> (
+      Result_2,
+    );
+  verify_subscriber_count_proof : (principal, nat64) -> (Result_2);
+  verify_video_engagement : (
+      principal,
+      text,
+      opt nat64,
+      opt nat64,
+      opt nat64,
+    ) -> (Result_2);
+  verify_view_count_proof : (principal, nat64) -> (Result_2);
+  verify_youtube_ownership : (principal, text) -> (bool) query;
+}

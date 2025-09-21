@@ -1,0 +1,42 @@
+type ApiEndpoint = record {
+  url : text;
+  platform : text;
+  data_path : text;
+  auth_header : opt text;
+};
+type HttpHeader = record { value : text; name : text };
+type HttpResponse = record {
+  status : nat;
+  body : blob;
+  headers : vec HttpHeader;
+};
+type OracleConfig = record {
+  endpoints : vec ApiEndpoint;
+  update_frequency : nat64;
+  vault_canister : principal;
+  is_active : bool;
+  last_update : nat64;
+  campaign_id : nat64;
+};
+type Result = variant { Ok; Err : text };
+type Result_1 = variant { Ok : vec RevenueData; Err : text };
+type RevenueData = record {
+  verified : bool;
+  platform : text;
+  currency : text;
+  timestamp : nat64;
+  raw_data : text;
+  amount : nat64;
+  campaign_id : nat64;
+};
+type TransformArgs = record { context : blob; response : HttpResponse };
+service : () -> {
+  deactivate_oracle : (nat64) -> (Result);
+  fetch_revenue_data : (nat64) -> (Result_1);
+  get_oracle_config : (nat64) -> (opt OracleConfig) query;
+  get_revenue_history : (nat64) -> (vec RevenueData) query;
+  register_campaign_oracle : (nat64, principal, vec ApiEndpoint, nat64) -> (
+      Result,
+    );
+  transform_response : (TransformArgs) -> (HttpResponse);
+}

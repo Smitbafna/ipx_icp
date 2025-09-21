@@ -1,0 +1,24 @@
+type CampaignMetadata = record {
+  status : CampaignStatus;
+  revenue_share_percentage : nat8;
+  title : text;
+  creator : principal;
+  vault_canister_id : opt principal;
+  description : text;
+  oracle_endpoints : vec text;
+  created_at : nat64;
+  funding_goal : nat64;
+};
+type CampaignStatus = variant { Active; Draft; Funded; Cancelled; Completed };
+type Result = variant { Ok : nat64; Err : text };
+type Result_1 = variant { Ok; Err : text };
+service : () -> {
+  create_campaign : (text, text, nat64, nat8, vec text) -> (Result);
+  get_active_campaigns : () -> (vec record { nat64; CampaignMetadata }) query;
+  get_all_campaigns : () -> (vec record { nat64; CampaignMetadata }) query;
+  get_campaign : (nat64) -> (opt CampaignMetadata) query;
+  get_campaigns_by_creator : (principal) -> (
+      vec record { nat64; CampaignMetadata },
+    ) query;
+  update_campaign_status : (nat64, CampaignStatus) -> (Result_1);
+}

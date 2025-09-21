@@ -1,0 +1,101 @@
+type BackerInfo = record {
+  nft_token_id : opt nat64;
+  investment_timestamp : nat64;
+  amount_invested : nat64;
+  share_percentage : float64;
+  total_claimed : nat64;
+};
+type ClaimStatus = variant { Paid; Approved; Rejected; Pending };
+type InsuranceClaim = record {
+  status : ClaimStatus;
+  claim_id : nat64;
+  claimer : principal;
+  filed_at : nat64;
+  evidence : vec text;
+  approver : opt principal;
+  amount : nat64;
+  resolved_at : opt nat64;
+  reason : text;
+};
+type InvestmentResult = record {
+  nft_token_id : opt nat64;
+  share_percentage : float64;
+  message : text;
+  success : bool;
+};
+type Result = variant { Ok : vec record { principal; nat64 }; Err : text };
+type Result_1 = variant { Ok : nat64; Err : text };
+type Result_2 = variant { Ok; Err : text };
+type RevenueUpdate = record {
+  source : text;
+  oracle_verification : bool;
+  timestamp : nat64;
+  amount : nat64;
+};
+type SlashEvent = record {
+  creator : principal;
+  executed_at : nat64;
+  amount_slashed : nat64;
+  approved_by : vec principal;
+  beneficiaries : vec principal;
+  campaign_id : nat64;
+  reason : SlashReason;
+};
+type SlashReason = variant {
+  RevenueFraud;
+  ProjectAbandonment;
+  Other : text;
+  MissedRevenueReports;
+  GovernanceDecision;
+};
+type SlashingConditions = record {
+  minimum_active_period_days : nat64;
+  revenue_decline_threshold_percentage : nat8;
+  governance_votes_required : nat8;
+  missed_revenue_reports_threshold : nat8;
+};
+type VaultState = record {
+  revenue_share_percentage : nat8;
+  title : text;
+  creator : principal;
+  current_funding : nat64;
+  nft_registry_canister : opt principal;
+  oracle_canister : opt principal;
+  revenue_history : vec RevenueUpdate;
+  insurance_claims : vec InsuranceClaim;
+  oracle_endpoints : vec text;
+  created_at : nat64;
+  slashing_conditions : SlashingConditions;
+  slashed_creators : vec SlashEvent;
+  insurance_coverage_ratio : nat8;
+  funding_goal : nat64;
+  total_revenue : nat64;
+  stream_canister : opt principal;
+  insurance_pool_balance : nat64;
+  insurance_fee_percentage : nat8;
+  campaign_id : nat64;
+  backers : vec record { principal; BackerInfo };
+};
+service : () -> {
+  distribute_payouts : () -> (Result);
+  file_insurance_claim : (nat64, text, vec text) -> (Result_1);
+  get_backer_info : (principal) -> (opt BackerInfo) query;
+  get_funding_progress : () -> (nat64, nat64, float64) query;
+  get_insurance_claim : (nat64) -> (opt InsuranceClaim) query;
+  get_insurance_claims : (opt principal) -> (vec InsuranceClaim) query;
+  get_insurance_pool_info : () -> (nat64, nat8, nat8) query;
+  get_slash_events : () -> (vec SlashEvent) query;
+  get_slashing_conditions : () -> (SlashingConditions) query;
+  get_vault_state : () -> (opt VaultState) query;
+  invest : (nat64) -> (InvestmentResult);
+  mint_nft_for_backer : (principal) -> (Result_1);
+  process_insurance_claim : (nat64, bool, text) -> (Result_2);
+  propose_slashing : (principal, SlashReason, vec text) -> (Result_1);
+  set_canister_refs : (opt principal, opt principal, opt principal) -> (
+      Result_2,
+    );
+  update_insurance_settings : (opt nat8, opt nat8, opt SlashingConditions) -> (
+      Result_2,
+    );
+  update_revenue : (nat64, text, bool) -> (Result_2);
+}

@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "canisters": {
+    "campaign-factory": {
+      "type": "rust",
+      "package": "campaign-factory",
+      "candid": "candid/campaign-factory.did"
+    },
+    "vault": {
+      "type": "rust", 
+      "package": "vault",
+      "candid": "candid/vault.did"
+    },
+    "nft-registry": {
+      "type": "rust",
+      "package": "nft-registry", 
+      "candid": "candid/nft-registry.did"
+    },
+    "revenue-api-connector": {
+      "type": "rust",
+      "package": "revenue-api-connector",
+      "candid": "candid/revenue-api-connector.did"
+    },
+    "ipx-stream": {
+      "type": "rust",
+      "package": "ipx-stream",
+      "candid": "candid/ipx-stream.did"
+    },
+    "ipx-dao": {
+      "type": "rust",
+      "package": "ipx-dao",
+      "candid": "candid/ipx-dao.did"
+    }
+  },
+  "defaults": {
+    "build": {
+      "packtool": ""
+    }
+  },
+  "networks": {
+    "local": {
+      "bind": "127.0.0.1:4943",
+      "type": "ephemeral"
+    }
+  }
+}

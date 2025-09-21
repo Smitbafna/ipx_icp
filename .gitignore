@@ -1,0 +1,15 @@
+node_modules/
+.env*
+/.DS_Store
+/.vscode/
+frontend/.next/
+frontend/.env.local
+frontend/node_modules/
+ipx-protocol/.dfx/
+ipx-protocol/target/
+ipx-protocol/.cargo/
+ipx-protocol/Cargo.lock
+ipx-protocol/scripts/*.log
+*.log
+*.tmp
+*.swp

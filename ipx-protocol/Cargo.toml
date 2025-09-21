@@ -1,0 +1,18 @@
+[workspace]
+resolver = "2"
+members = [
+    "canisters/campaign-factory",
+    "canisters/vault",
+    "canisters/nft-registry",
+    "canisters/revenue-api-connector",
+    "canisters/ipx-stream",
+    "canisters/ipx-dao"
+]
+
+[workspace.dependencies]
+ic-cdk = "0.18"
+ic-cdk-macros = "0.18"
+ic-stable-structures = "0.6"
+candid = "0.10"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
